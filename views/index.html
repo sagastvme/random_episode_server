@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <meta name="description" content="{{.Description}}">
+    <link rel="icon" href="data:image/svg+xml,
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'>
+        <path d='M10 3H3V21H21V14' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
+        <path d='M21 3L12 12' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
+        <path d='M15 3H21V9' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
+    </svg>" type="image/svg+xml">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('episode');
+            
+            // Check if video element exists
+            if (!video) {
+                console.error("Video element not found!");
+                return;
+            }
+        
+            video.addEventListener('loadedmetadata', () => {
+                let randomTime = Math.floor(Math.random() * video.duration);
+                console.log('Random time:', randomTime);
+                video.currentTime = randomTime;
+                console.log('Video duration:', video.duration);
+            });
+        
+            video.addEventListener('error', (e) => {
+                console.error('Error loading video:', e);
+            });
+
+
+            video.addEventListener('ended',(e)=>{
+                location.reload();
+            })
+
+        });
+     
+        
+        </script>
+        
+</head>
+<body>
+
+    <video id="episode" width="640" height="360" controls autoplay   controlsList="nodownload">
+        <source src="{{.Path}}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</body>
+</html>
+
+</body>
+</html>
