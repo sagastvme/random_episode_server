@@ -38,7 +38,7 @@
         hls.loadSource(source);
         hls.attachMedia(video);
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          video.play();
+          
   
           video.addEventListener('loadedmetadata', () => {
             // Saltar a un tiempo aleatorio después de cargar metadata
@@ -67,6 +67,6 @@
   </script>
 </head>
 <body>
-  <video id="video" controls autoplay controlsList="nodownload"></video>
+  <video id="video" controls  controlsList="nodownload"></video>
 </body>
 </html>
