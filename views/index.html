@@ -3,55 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.Title}}</title>
-    <meta name="description" content="{{.Description}}">
-    <link rel="icon" href="data:image/svg+xml,
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'>
-        <path d='M10 3H3V21H21V14' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
-        <path d='M21 3L12 12' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
-        <path d='M15 3H21V9' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
-    </svg>" type="image/svg+xml">
+    <title>Reproductor HLS con hls.js</title>
+
+    <!-- Incluye la biblioteca hls.js desde CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const video = document.getElementById('episode');
-            
-            // Check if video element exists
-            if (!video) {
-                console.error("Video element not found!");
-                return;
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.getElementById('video');
+            const source = '{{.Path}}'; // Ruta dinámica del servidor al .m3u8
+
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(source);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play();
+
+                    video.addEventListener('loadedmetadata', () => {
+                        // Saltar a un tiempo aleatorio después de cargar metadata
+                        const randomTime = Math.floor(Math.random() * video.duration);
+                        video.currentTime = randomTime;
+                    });
+                });
+
+                hls.on(Hls.Events.ERROR, (event, data) => {
+                    console.error("HLS error:", data);
+                });
             }
-        
-            video.addEventListener('loadedmetadata', () => {
-                let randomTime = Math.floor(Math.random() * video.duration);
-                console.log('Random time:', randomTime);
-                video.currentTime = randomTime;
-                console.log('Video duration:', video.duration);
-            });
-        
-            video.addEventListener('error', (e) => {
-                console.error('Error loading video:', e);
-            });
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = source;
+                video.addEventListener('loadedmetadata', () => {
+                    const randomTime = Math.floor(Math.random() * video.duration);
+                    video.currentTime = randomTime;
+                });
+            }
+            else {
+                console.error("HLS no soportado.");
+            }
 
-
-            video.addEventListener('ended',(e)=>{
+            video.addEventListener('ended', () => {
                 location.reload();
-            })
-
+            });
         });
-     
-        
-        </script>
-        
+    </script>
 </head>
 <body>
-
-    <video id="episode" width="640" height="360" controls autoplay   controlsList="nodownload">
-        <source src="{{.Path}}" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-</body>
-</html>
-
+    <video id="video" width="640" height="360" controls autoplay controlsList="nodownload"></video>
 </body>
 </html>
