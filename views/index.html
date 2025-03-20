@@ -1,110 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reproductor HLS con hls.js</title>
-
-    <!-- Incluye la biblioteca hls.js desde CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-    <style>
-        /* Estilos generales */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #1e1e1e;
-            color: white;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-            text-align: center;
-            box-sizing: border-box;
-        }
-
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            color: #ff6600;
-        }
-
-        .container {
-            background-color: rgba(0, 0, 0, 0.8);
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
-            width: 80%;
-            max-width: 800px;
-        }
-
-        video {
-            border-radius: 10px;
-            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.6);
-            width: 100%;
-            max-width: 640px;
-            height: auto;
-        }
-
-        /* Estilo para los controles */
-        video::-webkit-media-controls {
-            background-color: #ff6600;
-            border-radius: 10px;
-        }
-
-        /* Efecto hover */
-        video:hover {
-            transform: scale(1.05);
-            transition: transform 0.3s ease-in-out;
-        }
-    </style>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const video = document.getElementById('video');
-            const source = '{{.Path}}'; // Ruta dinámica del servidor al .m3u8
-
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(source);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play();
-
-                    video.addEventListener('loadedmetadata', () => {
-                        // Saltar a un tiempo aleatorio después de cargar metadata
-                        const randomTime = Math.floor(Math.random() * video.duration);
-                        video.currentTime = randomTime;
-                    });
-                });
-
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    console.error("HLS error:", data);
-                });
-            }
-            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = source;
-                video.addEventListener('loadedmetadata', () => {
-                    const randomTime = Math.floor(Math.random() * video.duration);
-                    video.currentTime = randomTime;
-                });
-            }
-            else {
-                console.error("HLS no soportado.");
-            }
-
-            video.addEventListener('ended', () => {
-                location.reload();
-            });
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reproductor HLS con hls.js</title>
+  
+  <!-- Incluye la biblioteca hls.js desde CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  
+  <style>
+    /* Fondo oscuro y centrado */
+    body {
+      background-color: #121212;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    /* Video responsive, sin demasiadas modificaciones */
+    video {
+      max-width: 100%;
+      width: 640px;
+      height: auto;
+    }
+  </style>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const video = document.getElementById('video');
+      const source = '{{.Path}}'; // Ruta dinámica del servidor al .m3u8
+  
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(source);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          video.play();
+  
+          video.addEventListener('loadedmetadata', () => {
+            // Saltar a un tiempo aleatorio después de cargar metadata
+            const randomTime = Math.floor(Math.random() * video.duration);
+            video.currentTime = randomTime;
+          });
         });
-    </script>
+  
+        hls.on(Hls.Events.ERROR, (event, data) => {
+          console.error("HLS error:", data);
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = source;
+        video.addEventListener('loadedmetadata', () => {
+          const randomTime = Math.floor(Math.random() * video.duration);
+          video.currentTime = randomTime;
+        });
+      } else {
+        console.error("HLS no soportado.");
+      }
+  
+      video.addEventListener('ended', () => {
+        location.reload();
+      });
+    });
+  </script>
 </head>
 <body>
-    <div class="container">
-        <h1>Reproductor de Video HLS</h1>
-        <video id="video" controls controlsList="nodownload"></video>
-    </div>
+  <video id="video" controls autoplay controlsList="nodownload"></video>
 </body>
 </html>
